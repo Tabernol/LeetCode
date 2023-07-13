@@ -1,8 +1,9 @@
 package portaone;
 
-public class Task {
+import java.util.stream.Stream;
 
-    private static String source = "The Tao gave birth to machine language.  Machine language gave birth\n" +
+public class Task {
+    private static final String SOURCE = "The Tao gave birth toto machine language.  Machine language gave birth\n" +
             "to the assembler.\n" +
             "The assembler gave birth to the compiler.  Now there are ten thousand\n" +
             "languages.\n" +
@@ -12,37 +13,48 @@ public class Task {
             "But do not program in COBOL if you can avoid it.\n" +
             "        -- Geoffrey James, \"The Tao of Programming\"";
 
-    public static char firstUniqueCharInWord(String word) {
-        char result = ' ';
+    public char findFirstUniqueCharInWord(String word) {
         OUTER:
         for (int i = 0; i < word.length(); i++) {
             INNER:
-            for (int j = i + 1; j < word.length(); j++) {
+            for (int j = 0; j < word.length(); j++) {
+                if (i == j) {
+                    continue INNER;
+                }
                 if (word.charAt(i) == word.charAt(j)) {
                     continue OUTER;
                 }
             }
-            result = word.charAt(i);
             return word.charAt(i);
+        }
+        return Character.MIN_VALUE;
+    }
+
+
+    public char findFirstUniqueCharInWordInString(String sourceString) {
+        if (sourceString == null) {
+            throw new IllegalArgumentException("The string for searching can't be null");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        String[] words = sourceString.replaceAll("\\W", " ").split("\s+");
+
+        for (String word : words) {
+            char temp = findFirstUniqueCharInWord(word);
+            if (temp != Character.MIN_VALUE) {
+                stringBuilder.append(temp);
+            }
+        }
+        char result = findFirstUniqueCharInWord(stringBuilder.toString());
+        if (result == Character.MIN_VALUE) {
+            throw new IllegalArgumentException("Not found unique char in words in source string");
         }
         return result;
     }
 
-
-    public static char firstUniqueChar(String sourceString) {
-        StringBuilder stringBuilder = new StringBuilder();
-        String[] s = sourceString.split("\\W");
-        System.out.println(s.length);
-        for (int i = 0; i < s.length; i++) {
-            stringBuilder.append(firstUniqueCharInWord(s[i]));
-        }
-        char c = firstUniqueCharInWord(stringBuilder.toString());
-        return c;
-    }
-
     public static void main(String[] args) {
-        System.out.println(firstUniqueChar(source));
+        Task task = new Task();
+        char result = task.findFirstUniqueCharInWordInString(SOURCE);
+        System.out.println("result = " + result);
     }
-
 }
 
